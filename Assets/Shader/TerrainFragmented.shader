@@ -39,6 +39,7 @@ Shader "Learning/Environment/TerrainFragmented"
             float _DistortionRate;
             float _RotationSpeed;
             fixed4 _DistortionColor;
+            float2 _PointOffset;
 
             v2f vert (appdata v)
             {
@@ -51,9 +52,10 @@ Shader "Learning/Environment/TerrainFragmented"
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 uv = i.uv - 0.5;
-                float distance = length(uv);
+                float2 distort = uv + _PointOffset;
+                float distance = length(distort);
                 float interpolation = smoothstep(0.1, 0.04, distance);
-                float2 distort = uv * interpolation * _DistortionRate;
+                distort *= interpolation * _DistortionRate;
 
                 float angle = _Time.y * _RotationSpeed;
                 float2x2 rotation = float2x2(cos(angle), -sin(angle), sin(angle), cos(angle));
