@@ -3,6 +3,9 @@ Shader "Learning/Environment/TerrainFragmented"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _DistortionRate("Distortion Rate", Range(1, 50)) = 30
+        _RotationSpeed("Rotation Speed", Range(0.0, 10.0)) = 3.0
+        _DistortionColor("Distortion Color", Color) = (0,0,0,0)
     }
     SubShader
     {
@@ -33,6 +36,9 @@ Shader "Learning/Environment/TerrainFragmented"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            float _DistortionRate;
+            float _RotationSpeed;
+            fixed4 _DistortionColor;
 
             v2f vert (appdata v)
             {
@@ -45,12 +51,17 @@ Shader "Learning/Environment/TerrainFragmented"
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 uv = i.uv - 0.5;
-                float2 distort = uv;
                 float distance = length(uv);
                 float interpolation = smoothstep(0.1, 0.04, distance);
-                distort *= interpolation * 30;
-                i.uv += distort;
-                fixed4 col = tex2D(_MainTex, i.uv);
+                float2 distort = uv * interpolation * _DistortionRate;
+
+                float angle = _Time.y * _RotationSpeed;
+                float2x2 rotation = float2x2(cos(angle), -sin(angle), sin(angle), cos(angle));
+                distort = mul(rotation, distort);
+
+                uv += distort + 0.5;
+                fixed4 col = tex2D(_MainTex, uv);
+                col.rgb += _DistortionColor.rgb * interpolation;
                 return col;
             }
             ENDCG
