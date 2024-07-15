@@ -45,10 +45,13 @@ Shader "Learning/Environment/TerrainFragmented"
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 uv = i.uv - 0.5;
+                float2 distort = uv;
                 float distance = length(uv);
                 float interpolation = smoothstep(0.1, 0.04, distance);
+                distort *= interpolation * 30;
+                i.uv += distort;
                 fixed4 col = tex2D(_MainTex, i.uv);
-                return float4(interpolation, interpolation, interpolation,1);
+                return col;
             }
             ENDCG
         }
