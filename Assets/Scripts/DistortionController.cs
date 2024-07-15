@@ -18,19 +18,19 @@ public class DistortionController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            _offset.y += Time.deltaTime * _speed;
+            _offset.y -= Time.deltaTime * _speed;
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            _offset.y -= Time.deltaTime * _speed;
+            _offset.y += Time.deltaTime * _speed;
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            _offset.x -= Time.deltaTime * _speed;
+            _offset.x += Time.deltaTime * _speed;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            _offset.x += Time.deltaTime * _speed;
+            _offset.x -= Time.deltaTime * _speed;
         }
         
         _material.SetVector(PROPERTY_KEY, _offset);
